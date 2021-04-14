@@ -1,0 +1,55 @@
+<html>
+    <head>
+<!-- release 할 때에는 아래로 바꿔줄 필요가 있음.
+        <script crossorigin src="https://unpkg.com/react@16/umd/react.produnction.js"></script>
+-->
+        <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="text/babel">
+            class LikeButton extends React.Component {
+                constructor(props) {
+                    super(props);
+
+                    this.state = {
+                        liked: false
+                        ,
+                    };
+                }
+
+                render() {
+                    // JSX ( JavaScript + XML )
+                    return <button onClick={ () => { this.setState({ liked: true })} }>
+                        {this.state.liked ? 'Liked' : 'Like'}
+                    </button>;
+
+                  /*
+                    const e = React.createElement;
+                    return e(
+                        'button'
+                        , {
+                            onClick: () => {
+                                this.setState({ liked: true })
+                            }
+                            , type: 'submit'
+                        }
+                        , this.state.liked === true ? 'Liked' : 'Like'
+                    );*/
+                }
+            }
+        </script>
+    <script type="text/babel">
+        ReactDOM.render(
+            <div>
+                <LikeButton/>
+                <LikeButton/>
+                <LikeButton/>
+            </div>
+            , document.querySelector('#root'));
+    </script>
+    </body>
+</html>
