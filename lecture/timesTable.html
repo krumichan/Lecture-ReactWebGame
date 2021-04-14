@@ -14,27 +14,31 @@
 <div id="root"></div>
 <script type="text/babel">
     class TimesTable extends React.Component {
-        constructor(props) {
-            super(props);
+        state = {
+            first: Math.ceil(Math.random() * 9)
+            , second: Math.ceil(Math.random() * 9)
+            , value: ''
+            , result: ''
+            ,
+        };
 
-            this.state = {
-                first: Math.ceil(Math.random() * 9)
-                , second: Math.ceil(Math.random() * 9)
-                , value: ''
-                , result: ''
-                ,
-            };
-        }
+        input;
 
         onSubmit = (e) => {
             e.preventDefault();
             if (parseInt(this.state.value) === this.state.first * this.state.second) {
-                this.setState({
-                    result: '정답'
-                    , first: Math.ceil(Math.random() * 9)
-                    , second: Math.ceil(Math.random() * 9)
-                    , value: ''
-                    ,
+                // setState() 함수는 비동기 함수이다. ( 주의 )
+                this.setState((prevState) => {
+                    const prevResult = 'prev [' +
+                        prevState.first + " * " + prevState.second + " = " + prevState.value
+                        + ']';
+                    return {
+                        result: prevResult + '정답'
+                        , first: Math.ceil(Math.random() * 9)
+                        , second: Math.ceil(Math.random() * 9)
+                        , value: ''
+                        ,
+                    }
                 })
             } else {
                 this.setState({
@@ -43,22 +47,34 @@
                     ,
                 })
             }
+            this.input.focus();
         };
 
         onChange = (e) => {
-            this.setState({value: e.target.value});
+            this.setState({
+                value: e.target.value
+                ,
+            });
+        };
+
+        ref = (c) => {
+            this.input = c;
         };
 
         render() {
+            // setState() 를 수행하면, rander() 함수가 호출된다.
             return (
-                <div>
+                // <div>
+                // div 를 안쓰기 위함.
+                <React.Fragment>
                     <div>{this.state.first} * {this.state.second} 는?</div>
                     <form onSubmit={this.onSubmit}>
-                        <input type="number" value={this.state.value} onChange={this.onChange}/>
+                        <input ref={this.ref} type="number" value={this.state.value} onChange={this.onChange}/>
                         <button>입력!</button>
                     </form>
                     <div>{this.state.result}</div>
-                </div>
+                </React.Fragment>
+                // </div>
             );
         }
     }
