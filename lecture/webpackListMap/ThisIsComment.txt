@@ -1,0 +1,70 @@
+/**
+ *
+ * < list > 의 경우..=================================
+<ul>
+{['사과', '바나나', '포도', '귤', '감', '배', '밤']
+                    .map((val) => {
+                        return (
+                            <li key={val}>{val}</li>
+                        );
+                    })}
+</ul>
+ * ==================================================
+ *
+ * < map > 의 경우..==================================
+<ul>
+{[
+    ['사과', '맛1']
+    , ['바나나', '맛2']
+    , ['포도', '맛3']
+    , ['귤', '맛4']]
+                .map((val) => {
+                    return (
+                        <li key={val[0]}><b>{val[0]}</b> - {val[1]}</li>
+                    );
+                })}
+</ul>
+ * ==================================================
+ *
+ * < map > 의 경우2..=================================
+ <ul>
+ {[
+    { fruit: '사과',  taste: '맛1' }
+    , { fruit: '바나나', taste: '맛2' }
+    , { fruit: '포도', taste: '맛3' }
+    , { fruit: '귤', taste: '맛4' }]
+                .map((val) => {
+                    return (
+                        <li key={val.fruit}><b>{val.fruit}</b> - {val.taste}</li>
+                    );
+                })}
+ </ul>
+ * ==================================================
+ */
+
+ /**
+  * require : module.export된 module을 호출할 경우.
+  *
+  * import와 require는 호환이 된다.
+  * ex)
+  *      const React = require('react')
+  *      const ReactDOM = require('react-dom')
+  *      =======
+  *      import React, { Component } from 'react';
+  * 위의 2가지 경우가 같다.
+  *
+  *
+  * ## 아래는 ES2015의 module 문법이다.
+  * ##  export   -> 한 파일 안에서 여러 번 쓸 수 있다.
+  * export const hello = 'hello';   // import { hello }
+  * export const bye = 'bye';       // import { bye }
+  *
+  * ##  export default   -> 한 파일당 한 번만 쓸 수 있다.
+  * export default NumberBaseball; // import NumberBaseball
+  *
+  *
+  * // 아래는 node의 module 문법이다.
+  * // const React = require('react')
+  * // exports.hello = 'hello'
+  * // module.exports = NumberBaseball
+  */
