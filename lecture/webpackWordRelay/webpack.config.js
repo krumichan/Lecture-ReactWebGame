@@ -4,7 +4,7 @@ const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 // 파일을 하나로 합쳐주기 위한 webpack 설정.
 module.exports = {
     name: 'work-relay-setting' // webpack 모듈의 이름.
-    , mode: 'development' // service: production.
+    , mode: 'development' // service 배포의 경우 ⇒ mode: production.
     , devtool: 'eval'
     , resolve: {
         extensions: ['.js', '.jsx']
