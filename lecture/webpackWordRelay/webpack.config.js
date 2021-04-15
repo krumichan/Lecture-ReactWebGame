@@ -24,11 +24,20 @@ module.exports = {
     ,module: {
         rules: [
             {
-                test: /\.jsx?/ // js파일과 jsx파일에 rule을 적용.
-                , loader: 'babel-loader' // 적용할 rule
+                test: /\.jsx?$/
+                , loader: 'babel-loader'
                 , options: {
+                    // plugin의 모임이 preset.
                     presets: [
-                        '@babel/preset-env'
+                        // 참고 URL : https://github.com/browserslist/browserslist#queries
+                        ['@babel/preset-env', {
+                            targets: {
+                                // > 5% in KR : 한국에서 점유율이 5% 이상인 browser 지원.
+                                browsers: ['> 5% in KR', 'last 2 chrome versions']
+                                ,
+                            }
+                            , debug: true // babel을 deugging mode로 실행.
+                        }]
                         , '@babel/preset-react'
                     ]
                     , plugins: ['@babel/plugin-proposal-class-properties']
@@ -36,6 +45,10 @@ module.exports = {
             }
         ]
     }
+
+    , plugins: [
+
+    ]
 
     // 출력
     , output: {
