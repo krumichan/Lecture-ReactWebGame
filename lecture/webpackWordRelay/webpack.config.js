@@ -39,7 +39,7 @@ module.exports = {
 
     // 출력
     , output: {
-        path: path.join(__dirname, 'core') // __dirname : current directory. ( 여기서는 react directory absolute path )
+        path: path.join(__dirname, 'core') // __dirname : current directory. ( 여기서는 webpackWordRelay directory absolute path )
         , filename: 'app.js'
     }
 }
