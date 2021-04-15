@@ -1,0 +1,25 @@
+① npm init
+  ⇒ package.json 생성.
+     ( react에 필요한 package를 이곳에 설정. )
+
+② npm i react react-dom
+  ⇒ react와 react-dom 설치.
+
+③ npm i -D webpack webpack-cli
+  ⇒ webpack과 webpack-cli를 설치.
+  ⇒ -D 옵션의 경우, webpack을 개발에서만 사용한다는 의미.
+     ( 실제 Service 시, webpack은 사용하지 않는다. )
+     
+④ npx webpack
+  ⇒ webpack을 실행.
+  
+
+⑤ npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/plugin-proposal-class-properties babel-loader
+  ⇒ babel 설치.
+  ⇒ jsx의 문법을 사용하기 위함.
+  ⇒ -D 옵션의 경우, 개발 모드에서만 사용한다는 의미.
+     ( 실제 Service 시, 사용하지 않는다. )
+  ⇒ @babel/core : 기본적인 babel core
+  ⇒ @babel/preset-env : 개발 환경에 맞게 변환.
+  ⇒ @babel/preset-react : jsx를 앎맞게 변환..
+  ⇒ babel-loader : webpack과 babel을 연결.
