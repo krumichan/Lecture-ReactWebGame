@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 
 class Try extends Component {
     render() {
-        const { key, tryInfo } = this.props;
+        const { k, tryInfo } = this.props;
         return (
-            <li key={key}>
+            <li key={k}>
                 <div>{tryInfo.try}</div>
                 <div>{tryInfo.result}</div>
             </li>
