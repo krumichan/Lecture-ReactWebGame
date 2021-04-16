@@ -2,6 +2,9 @@ const path = require('path');
 const webpack = require('webpack')
 const RefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
+// service 배포의 경우.`
+// process.env.NODE_ENV = 'production';
+
 module.exports = {
     mode: 'development' // service 배포의 경우 ⇒ mode: production
     , devtool: 'eval'
