@@ -16,9 +16,9 @@ const rspPosition = {
 }
 
 const rspIdentity = {
-    rock: 1
+    rock: -1
     , scissor: 0
-    , paper: -1
+    , paper: 1
 }
 
 const computerChoice = (position) => {
@@ -36,28 +36,30 @@ class Rsp extends Component {
 
     interval;
 
+    changeHand = () => {
+        const { position } = this.state;
+
+        if (position === rspPosition.rock) {
+            this.setState({
+                position: rspPosition.scissor
+            });
+        } else if (position === rspPosition.scissor) {
+            this.setState({
+                position: rspPosition.paper
+            });
+        } else if (position === rspPosition.paper) {
+            this.setState({
+                position: rspPosition.rock
+            });
+        }
+    }
+
     /**
      * 해당 Component가 처음 rendering 된 후 호출되는 함수.
      * ⇒ 비동기 요청 수행.
      */
     componentDidMount() {
-        this.interval = setInterval(() => {
-            const { position } = this.state;
-
-            if (position === rspPosition.rock) {
-                this.setState({
-                    position: rspPosition.scissor
-                });
-            } else if (position === rspPosition.scissor) {
-                this.setState({
-                    position: rspPosition.paper
-                });
-            } else if (position === rspPosition.paper) {
-                this.setState({
-                    position: rspPosition.rock
-                });
-            }
-        }, 1000);
+        this.interval = setInterval(this.changeHand, 100);
     }
 
     /**
@@ -102,6 +104,10 @@ class Rsp extends Component {
                 };
             });
         }
+
+        setTimeout(() => {
+            this.interval = setInterval(this.changeHand, 100);
+        }, 2000);
     };
 
     render() {
