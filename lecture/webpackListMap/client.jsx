@@ -1,6 +1,6 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const ListMap = require('./ListMap');
+import ListMap from './ListMap';
 
 ReactDOM.render(<ListMap/>, document.querySelector('#root'));

@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 class SampleMapTry extends Component {
     render() {
         return (
-            <li key={v.fruit}>
-                <b>{v.fruit}: {v.taste}</b> - {i}
+            <li key={this.props.value.fruit}>
+                <b>{this.props.value.fruit}: {this.props.value.taste}</b> - {this.props.index}
                 <div>Contents Sample (1) - Sample Map Try</div>
                 <div>Contents Sample (2) - Sample Map Try</div>
                 <div>Contents Sample (3) - Sample Map Try</div>

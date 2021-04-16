@@ -31,17 +31,23 @@ class ListMap extends Component {
         return (
             <>
                 <h1>List Map Test</h1>
+                <hr/>
+
+                <h1> Sample Map Try </h1>
                 <ul>
                     {this.fruitMap.map((v, i) => {
                         return (
-                            <>
-                                <h1> Sample List Try </h1>
-                                <SampleListTry />
-                                <hr/>
+                           <SampleMapTry value={v} index={i} />
+                        );
+                    })}
+                </ul>
+                <hr/>
 
-                                <h1> Sample Map Try </h1>
-                                <SampleMapTry />
-                            </>
+                <ul>
+                    <h1> Sample List Try </h1>
+                    {this.fruitList.map((v, i) => {
+                        return (
+                            <SampleListTry value={v} inde={i} />
                         );
                     })}
                 </ul>
@@ -49,3 +55,5 @@ class ListMap extends Component {
         );
     }
 }
+
+export default ListMap;

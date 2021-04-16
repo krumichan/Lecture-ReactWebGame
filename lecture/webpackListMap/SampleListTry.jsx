@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 class SampleListTry extends Component {
     render() {
         return (
-            <li>
-                <b>{v}</b> - {i}
+            <li key={this.props.value}>
+                <b>{this.props.value}</b> - {this.props.index}
                 <div>Contents Sample (1) - Sample List Try</div>
                 <div>Contents Sample (2) - Sample List Try</div>
                 <div>Contents Sample (3) - Sample List Try</div>
