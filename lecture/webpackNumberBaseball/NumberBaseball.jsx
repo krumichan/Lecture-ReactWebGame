@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import Try from './Try';
 
 /**
@@ -27,6 +27,13 @@ class NumberBaseball extends Component {
         , answer: getNumbers()
         ,
     };
+
+    inputRef = createRef();
+    // 위의 createRef() 보다 자유도가 높다.
+    // onInputRef = (c) => {
+    //     // do something...
+    //     this.inputRef = c;
+    // }
 
     onSubmit = (e) => {
         e.preventDefault();
@@ -97,6 +104,8 @@ class NumberBaseball extends Component {
                 });
             }
         }
+
+        this.inputRef.current.focus();
     }
 
     onChange = (e) => {
@@ -109,7 +118,7 @@ class NumberBaseball extends Component {
             <>
                 <h1>{result}</h1>
                 <form onSubmit={this.onSubmit}>
-                    <input maxLength={4} value={value} onChange={this.onChange}/>
+                    <input ref={this.inputRef} maxLength={4} value={value} onChange={this.onChange}/>
                 </form>
                 <div>시도: {tries.length}</div>
                 <ul>
