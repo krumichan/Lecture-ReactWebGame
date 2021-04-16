@@ -37,7 +37,7 @@ class ListMap extends Component {
                 <ul>
                     {this.fruitMap.map((v, i) => {
                         return (
-                           <SampleMapTry value={v} index={i} />
+                           <SampleMapTry key={v.fruit + v.taste} value={v} index={i} />
                         );
                     })}
                 </ul>
@@ -47,7 +47,7 @@ class ListMap extends Component {
                     <h1> Sample List Try </h1>
                     {this.fruitList.map((v, i) => {
                         return (
-                            <SampleListTry value={v} inde={i} />
+                            <SampleListTry key={v} value={v} index={i} />
                         );
                     })}
                 </ul>
