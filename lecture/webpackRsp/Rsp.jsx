@@ -37,20 +37,12 @@ class Rsp extends Component {
     interval;
 
     changeHand = () => {
-        const { position } = this.state;
-
-        if (position === rspPosition.rock) {
-            this.setState({
-                position: rspPosition.scissor
-            });
-        } else if (position === rspPosition.scissor) {
-            this.setState({
-                position: rspPosition.paper
-            });
-        } else if (position === rspPosition.paper) {
-            this.setState({
-                position: rspPosition.rock
-            });
+        const setPosition = (pos) => { this.setState({ position: pos }); }
+        switch (this.state.position) {
+            case rspPosition.rock:  { setPosition(rspPosition.scissor); break; }
+            case rspPosition.scissor: { setPosition(rspPosition.paper); break; }
+            case rspPosition.paper: { setPosition(rspPosition.rock); break; }
+            default: { break; }
         }
     }
 
@@ -77,7 +69,22 @@ class Rsp extends Component {
         clearInterval(this.interval);
     }
 
-    onClick = (choice) => {
+    /**
+     *  -- 고위(고차)함수 패턴 --
+     * <button id="rock" className="btn" onClick={() => this.onClick('rock')}>바위</button>
+     * 위와 같이, onClick 등의 event 함수 안에 Lambda 식이 있고, 그 안에서 또 함수를 호출할 경우,
+     * 아래와 같이 수정할 수 있다.
+     *
+     * 前
+     *   <button ... onClick={ () => this.onClick('rock')}> ...
+     *   onClick = (choice) => { ... }
+     *
+     * 後
+     *   <button ... onClick{ this.onClick('rock') }> ...
+     *   onClick = (choice) => () => { ... }
+     *
+     */
+    onClick = (choice) => () => {
         const { position } = this.state;
 
         clearInterval(this.interval);
@@ -118,9 +125,9 @@ class Rsp extends Component {
                     id="computer"
                     style={{ background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${position} 0`}} />
                 <div>
-                    <button id="rock" className="btn" onClick={() => this.onClick('rock')}>바위</button>
-                    <button id="scissor" className="btn" onClick={() => this.onClick('scissor')}>가위</button>
-                    <button id="paper" className="btn" onClick={() => this.onClick('paper')}>보</button>
+                    <button id="rock" className="btn" onClick={this.onClick('rock')}>바위</button>
+                    <button id="scissor" className="btn" onClick={this.onClick('scissor')}>가위</button>
+                    <button id="paper" className="btn" onClick={this.onClick('paper')}>보</button>
                 </div>
                 <div>{result}</div>
                 <div>현재 {score}</div>

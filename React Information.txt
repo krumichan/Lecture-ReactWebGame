@@ -12,7 +12,6 @@
      
 ④ npx webpack
   ⇒ webpack을 실행.
-  
 
 ⑤ npm i -D @babel/core @babel/preset-env @babel/preset-react @babel/plugin-proposal-class-properties babel-loader
   ⇒ babel 설치.
@@ -23,3 +22,9 @@
   ⇒ @babel/preset-env : 개발 환경에 맞게 변환.
   ⇒ @babel/preset-react : jsx를 앎맞게 변환..
   ⇒ babel-loader : webpack과 babel을 연결.
+
+⑥ npm i -D react-refresh @pmmmwh/react-refresh-webpack-plugin
+  ⇒ hot reloading을 위한 package 추가.
+
+⑦ npm i -D webpack-dev-server
+  ⇒ webpack dev server 추가.
