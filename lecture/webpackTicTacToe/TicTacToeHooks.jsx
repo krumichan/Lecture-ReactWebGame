@@ -58,7 +58,7 @@ const TicTacToeHooks = () => {
         // action을 dispatch에 등록한다.
         // dispatch는 받은 action 객체를 해석해서 수행하는데,
         // 그 때 호출되는 함수가 위의 reducer 함수가 된다.
-        dispatch({ type: SET_WINNER, winner: 'O' });
+        // dispatch({ type: SET_WINNER, winner: 'O' });
     }, []);
 
     // 비동기 수행 관련은 반드시 useEffect를 사용해야한다. ( 위에서 선언한 state는 비동기 적으로 수행을 한다. )
