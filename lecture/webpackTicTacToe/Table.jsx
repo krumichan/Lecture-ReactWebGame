@@ -5,7 +5,7 @@ const Table = ({ onClick, tableData, dispatch }) => {
     return (
         <table onClick={onClick}>
             {Array(tableData.length).fill().map(
-                (tr, i) => (<Tr rowIndex={i} rowData={tableData[i]} dispatch={dispatch} />)
+                (tr, i) => (<Tr key={i} rowIndex={i} rowData={tableData[i]} dispatch={dispatch} />)
             )}
         </table>
     );

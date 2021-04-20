@@ -15,6 +15,7 @@ const initialState = {
 export const SET_WINNER = 'SET_WINNER';
 export const CLICK_CELL = 'CLICK_CELL';
 export const CHANGE_TURN = 'SET_TURN';
+export const RESET_GAME = 'RESET_GAME';
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -47,6 +48,23 @@ const reducer = (state, action) => {
                 ,
             }
         }
+
+        case RESET_GAME: {
+            return {
+                ...state
+                , turn: 'O'
+                , tableData: [
+                    ['', '', '']
+                    , ['', '', '']
+                    , ['', '', '']
+                ]
+                , recentCell: [-1, -1]
+            }
+        }
+
+        default: {
+            return state;
+        }
     }
 };
 
@@ -61,34 +79,49 @@ const TicTacToeHooks = () => {
         // dispatch({ type: SET_WINNER, winner: 'O' });
     }, []);
 
+    const isAlready = ((row, cell) => {
+        return row >= 0 && cell >= 0;
+    });
+
+    const isWin = ((data, row, cell) => {
+        return (data[row][0] === turn && data[row][1] === turn && data[row][2] === turn)
+            || (data[0][cell] === turn && data[1][cell] === turn && data[2][cell] === turn)
+            || (data[0][0] === turn && data[1][1] === turn && data[2][2] === turn)
+            || (data[0][2] === turn && data[1][1] === turn && data[2][0] === turn);
+    });
+
+    const isFilled = ((data) => {
+       let fill = true;
+
+       data.forEach((row) => {
+           row.forEach((cell) => {
+               fill = !cell ? false : fill;
+           });
+       });
+
+       return fill;
+    });
+
+    const isTied = ((data) => {
+       return isFilled(data);
+    });
+
     // 비동기 수행 관련은 반드시 useEffect를 사용해야한다. ( 위에서 선언한 state는 비동기 적으로 수행을 한다. )
     useEffect(() => {
-        const [row, cell] = recentCell;
-        if (row  < 0 || cell < 0) {
+        const [ row, cell ] = recentCell;
+
+        if (!isAlready(row, cell)) {
             return;
         }
 
-        let win = false;
-        if (tableData[row][0] === turn && tableData[row][1] === turn && tableData[row][2] === turn) {
-            win = true;
-        }
-
-        if (tableData[0][cell] === turn && tableData[1][cell] === turn && tableData[2][cell] === turn) {
-            win = true;
-        }
-
-        if (tableData[0][0] === turn && tableData[1][1] === turn && tableData[2][2] === turn) {
-            win = true;
-        }
-
-        if (tableData[0][2] === turn && tableData[1][1] === turn && tableData[2][0] === turn) {
-            win = true;
-        }
-
-        if (win) {
+        if (isWin(tableData, row, cell)) {
             dispatch({ type: SET_WINNER, winner: turn });
+            dispatch({ type: RESET_GAME });
         } else {
-            dispatch({ type: CHANGE_TURN });
+            // 무승부 확인.
+            isTied(tableData)
+                ? dispatch({ type: RESET_GAME })
+                : dispatch({ type: CHANGE_TURN });
         }
 
     }, [recentCell]);
