@@ -14,19 +14,19 @@ export const CODE = {
 }
 
 const position = (x, y) => {
-    return { x, y };
+    return [ x, y ];
 }
 
-const SEARCH_DIRECTION = {
-    LEFT_UP: position(-1, -1)
-    , UP: position(0, -1)
-    , RIGHT_UP: position(1, -1)
-    , RIGHT: position(0, 1)
-    , RIGHT_DOWN: position(1, 1)
-    , DOWN: position(0, 1)
-    , LEFT_DOWN: position(-1, 1)
-    , LEFT: position(-1, 0)
-}
+const SEARCH_DIRECTION = [
+    position(-1, -1)  // left up
+    , position(0, -1)  // up
+    , position(1, -1)  // right up
+    , position(1,  0)// right
+    , position(1, 1)  // right down
+    , position(0, 1)  // down
+    , position(-1, 1)  // left down
+    , position(-1, 0)  // left
+];
 
 export const TableContext = createContext({
     tableData: []
@@ -113,6 +113,16 @@ const deepCopy = (table, row) => {
     return copyTable;
 };
 
+const deepCopyAll = (table, row) => {
+    const copyTable = deepCopy(table, row);
+
+    copyTable.forEach((row, i) => {
+        copyTable[i] = [...copyTable[i]];
+    });
+
+    return copyTable;
+}
+
 const openCell = (table, row, cell, openCode) => {
     const copyTable = deepCopy(table, cell);
     copyTable[row][cell] = openCode;
@@ -132,22 +142,75 @@ const updateState = (state, putValue, halted) => {
     return halted !== undefined ? { ...updatedState, halted: halted } : updatedState;
 }
 
-const searchCell = (table, row, cell) => {
-    let arround = [];
-    if (row > 0) {
-        arround.push(table[row - 1][cell]);
+const aroundPositions = (row, cell, minX, maxX, minY, maxY) => {
+    const positions = [];
 
-        if (cell > 0) {
+    SEARCH_DIRECTION.forEach(([offsetX, offsetY]) => {
+        const [posX, posY] = [row + offsetY, cell + offsetX];
 
+        if (posX >= minX && posY >= minY && posX < maxX && posY < maxY) {
+            positions.push([row + offsetY, cell + offsetX]);
         }
+    });
+
+    return positions;
+};
+
+const purePositions = (table, offsetPositions) => {
+    return offsetPositions.filter(([offsetX, offsetY]) => {
+        return !exclusiveSearch(table[offsetX][offsetY]);
+    });
+};
+
+const exclusiveSearch = (cellData) => {
+    return [CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION]
+        .includes(cellData);
+};
+
+const listIfExists = (table, offsetPositions) => {
+    const around = [];
+
+    offsetPositions.forEach((offset) => {
+       const [offsetX, offsetY] = offset;
+
+       const checked = table[offsetX][offsetY];
+       if (checked) {
+           around.push(checked);
+       }
+    });
+
+    return around;
+}
+
+const recursionSearch = (table, offsetPositions) => {
+    let tempTable = table;
+
+    offsetPositions.forEach((offset) => {
+        const [offsetX, offsetY] = offset;
+        tempTable = searchCell(tempTable, offsetX, offsetY);
+    });
+
+    return tempTable;
+}
+
+const searchCell = (table, row, cell) => {
+    // 대상이 되는 offset list. ( 대상외를 분리시킨 결과 )
+    const offsetPositions = purePositions(
+        table
+        // 모든 offset 습득.
+        , aroundPositions(row, cell, 0, table[0].length, 0, table.length)
+    );
+
+    const count = listIfExists(table, offsetPositions)
+        .filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
+    table[row][cell] = count;
+
+    // 주변 cell 도 확인을 위한 recursion 수행.
+    if (count === 0) {
+        table = recursionSearch(table, offsetPositions);
     }
-    if (table[row - 1]) {
-        arround.concat(
-            table[row - 1][cell - 1]
-            , table[row - 1][cell]
-            , table[row - 1][cell + 1]
-        );
-    }
+
+    return table;
 };
 
 export const START_GAME = 'START_GAME';
@@ -169,9 +232,10 @@ const reducer = (state, action) => {
         }
 
         case OPEN_CELL: {
-            const mineCount = searchCell(tableData, row, cell);
+            const deep = deepCopyAll(
+                openCell(tableData, row, cell, CODE.OPENED), row, cell);
             return updateState(state
-                , openCell(tableData, row, cell, CODE.OPENED));
+                , searchCell(deep, row, cell));
         }
 
         case CLICK_MINE: {
