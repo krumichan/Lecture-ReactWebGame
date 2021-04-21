@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, memo } from 'react';
 import { TableContext, CODE } from "./MineSearchHooks";
 import { OPEN_CELL, CLICK_MINE, FLAG_CELL, QUESTION_CELL, NORMALIZE_CELL } from "./MineSearchHooks";
 
@@ -74,7 +74,7 @@ const getTdText = (code) => {
     }
 };
 
-const Td = ({ rowIndex, cellIndex }) => {
+const Td = memo(({ rowIndex, cellIndex }) => {
     const { tableData, dispatch, halted } = useContext(TableContext);
 
     const onClickTd = useCallback(() => {
@@ -83,28 +83,16 @@ const Td = ({ rowIndex, cellIndex }) => {
         }
 
         switch (tableData[rowIndex][cellIndex]) {
-            case CODE.OPENED: {
-                return;
-            }
-
-            case CODE.FLAG_MINE: {
-                return;
-            }
-
-            case CODE.FLAG: {
-                return;
-            }
-
-            case CODE.QUESTION_MINE: {
-                return;
-            }
-
+            case CODE.OPENED:
+            case CODE.FLAG_MINE:
+            case CODE.FLAG:
+            case CODE.QUESTION_MINE:
             case CODE.QUESTION: {
                 return;
             }
 
             case CODE.NORMAL: {
-                dispatch({ type: OPEN_CELL, row: rowIndex, cell: cellIndex});
+                dispatch({ type: OPEN_CELL, row: rowIndex, cell: cellIndex });
                 return;
             }
 
@@ -121,11 +109,11 @@ const Td = ({ rowIndex, cellIndex }) => {
 
     // right click...
     const onRightClickTd = useCallback((e) => {
+        e.preventDefault(); // 우클릭에 의해 생기는 menu를 뜨지 않게 하기 위함.
+
         if (halted) {
             return;
         }
-
-        e.preventDefault(); // 우클릭에 의해 생기는 menu를 뜨지 않게 하기 위함.
 
         switch (tableData[rowIndex][cellIndex]) {
             case CODE.NORMAL:
@@ -152,16 +140,21 @@ const Td = ({ rowIndex, cellIndex }) => {
         }
     }, [tableData[rowIndex][cellIndex], halted]);
 
-    const oneData = tableData[rowIndex][cellIndex];
+    const data = tableData[rowIndex][cellIndex];
+    return <RealTd onClickTd={onClickTd} onRightClickTd={onRightClickTd} data={data} />;
+});
+
+const RealTd = memo(({ onClickTd, onRightClickTd, data }) => {
+    console.log('td rendered');
     return (
         <td
-            style={getTdStyle(oneData)}
+            style={getTdStyle(data)}
             onClick={onClickTd}
             onContextMenu={onRightClickTd}
         >
-            {getTdText(oneData)}
+            {getTdText(data)}
         </td>
     );
-};
+});
 
 export default Td;

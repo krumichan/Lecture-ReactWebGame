@@ -1,4 +1,4 @@
-import React, {createContext, useMemo, useReducer} from 'react';
+import React, {createContext, useMemo, useReducer, useEffect} from 'react';
 import Table from "./Table";
 import Form from "./Form";
 
@@ -37,8 +37,9 @@ export const TableContext = createContext({
 const initialState = {
     tableData: []
     , timer: 0
-    , result: 0
+    , result: ''
     , halted: true
+    , cellInfo: { row: 0, cell: 0, mine: 0 }
     ,
 }
 
@@ -137,11 +138,6 @@ const lockCell = (table, row, cell, condition, trueCode, falseCode) => {
     return copyTable;
 };
 
-const updateState = (state, putValue, halted) => {
-    const updatedState = { ...state, tableData: putValue };
-    return halted !== undefined ? { ...updatedState, halted: halted } : updatedState;
-}
-
 const aroundPositions = (row, cell, minX, maxX, minY, maxY) => {
     const positions = [];
 
@@ -213,6 +209,19 @@ const searchCell = (table, row, cell) => {
     return table;
 };
 
+const isCompleted = (table, {row, cell, mine}) => {
+    const expected = (row * cell) - mine;
+    let real = 0;
+
+    table.forEach((rows) => {
+        rows.forEach((cell) => {
+            real += ( cell >= CODE.OPENED ) ? 1 : 0;
+        });
+    });
+
+    return expected === real;
+};
+
 export const START_GAME = 'START_GAME';
 export const OPEN_CELL = 'OPEN_CELL';
 export const CLICK_MINE = 'CLICK_MINE';
@@ -220,42 +229,66 @@ export const CLICK_MINE = 'CLICK_MINE';
 export const FLAG_CELL = 'FLAG_CELL';
 export const QUESTION_CELL = 'QUESTION_CELL';
 export const NORMALIZE_CELL = 'NORMALIZE_CELL';
+export const INCREMENT_TIMER = 'INCREMENT_TIMER';
 
 const reducer = (state, action) => {
-    const { tableData } = state;
+    const { tableData, cellInfo, timer } = state;
     const { type, row, cell, mine } = action;
 
     switch (type) {
         case START_GAME: {
-            return updateState(state
-                , makeTable(row, cell, mine), false);
+            return { ...state
+                , tableData: makeTable(row, cell, mine)
+                , halted: false
+                , cellInfo: {row: row, cell: cell, mine: mine}
+                , timer: 0
+                , result: ''
+            };
         }
 
         case OPEN_CELL: {
             const deep = deepCopyAll(
                 openCell(tableData, row, cell, CODE.OPENED), row, cell);
-            return updateState(state
-                , searchCell(deep, row, cell));
+            const searchedCell = searchCell(deep, row, cell);
+            const halted = isCompleted(searchedCell, cellInfo);
+            return { ...state
+                , tableData: searchedCell
+                , halted: halted
+                , result: halted ? `${timer}초만에 승리하셨습니다.` : ''
+            };
         }
 
         case CLICK_MINE: {
-            return updateState(state
-                , openCell(tableData, row, cell, CODE.CLICKED_MINE), true);
+            return { ...state
+                , tableData: openCell(tableData, row, cell, CODE.CLICKED_MINE)
+                , halted: true
+                , result: '졌습니다.'
+            };
         }
 
         case FLAG_CELL: {
-            return updateState(state
-                , lockCell(tableData, row, cell, CODE.MINE, CODE.FLAG_MINE, CODE.FLAG));
+            return { ...state
+                , tableData: lockCell(tableData, row, cell, CODE.MINE, CODE.FLAG_MINE, CODE.FLAG)
+            };
         }
 
         case QUESTION_CELL: {
-            return updateState(state
-                , lockCell(tableData, row, cell, CODE.FLAG_MINE, CODE.QUESTION_MINE, CODE.QUESTION));
+            return { ...state
+                , tableData: lockCell(tableData, row, cell, CODE.FLAG_MINE, CODE.QUESTION_MINE, CODE.QUESTION)
+            };
         }
 
         case NORMALIZE_CELL: {
-            return updateState(state
-                , lockCell(tableData, row, cell, CODE.QUESTION_MINE, CODE.MINE, CODE.NORMAL));
+            return { ...state
+                , tableData: lockCell(tableData, row, cell, CODE.QUESTION_MINE, CODE.MINE, CODE.NORMAL)
+            };
+        }
+
+        case INCREMENT_TIMER: {
+            return {
+                ...state
+                , timer: timer + 1
+            }
         }
 
         default: {
@@ -271,14 +304,26 @@ const MineSearchHooks = () => {
     // 무의미한 render로 인해 발생하는 성능저하를 방지하기 위함.
     const value = useMemo(() => ({ tableData, halted, dispatch }) , [tableData, halted]);
 
+    useEffect(() => {
+        let timer;
+        if (halted === false) {
+            timer = setInterval(() => {
+                dispatch({ type: INCREMENT_TIMER });
+            }, 1000);
+        }
+        return () => {
+            clearInterval(timer);
+        }
+    }, [halted]);
+
     return (
         // Context API에서 제공하는 Provider로
         // 이 내부의 Component들은 Context Data에 접근할 수 있다.
         <TableContext.Provider value={value}>
             <Form />
-            <div>{timer}</div>
+            <div>timer: {timer}</div>
             <Table />
-            <div>{result}</div>
+            <div>{result !== '' && '결과:'} {result}</div>
         </TableContext.Provider>
     );
 };
