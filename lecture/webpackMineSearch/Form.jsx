@@ -3,7 +3,7 @@ import { TableContext, START_GAME } from "./MineSearchHooks";
 
 const Form = () => {
     const [row, setRow] = useState(10);
-    const [cell, serCell] = useState(10);
+    const [cell, setCell] = useState(10);
     const [mine, setMine] = useState(20);
 
     const { dispatch } = useContext(TableContext);
@@ -13,11 +13,11 @@ const Form = () => {
     }, []);
 
     const onChangeCell = useCallback((e) => {
-        setRow(e.target.value);
+        setCell(e.target.value);
     }, []);
 
     const onChangeMine = useCallback((e) => {
-        setRow(e.target.value);
+        setMine(e.target.value);
     }, []);
 
     const onClickButton = useCallback(() => {
